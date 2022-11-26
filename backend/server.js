@@ -1,9 +1,20 @@
 const express = require('express')
+const { auth } = require('firebase-admin')
 const app = express()
 const dotenv = require('dotenv').config()
-const connectDB = require('./config/db.js')
+const connectDB = require('./config/db')
 const {errorHandler} = require('./middlewares/errorMiddleware')
+const checkAuth = require('./middlewares/firebaseValidation')
 
+//Firebase connection
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./fbServiceAccountKey.json")
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://phone-firebase-e6ae0-default-rtdb.firebaseio.com"
+})
 
 
 //Set the connection to the database
@@ -15,7 +26,7 @@ app.use( express.urlencoded({ extended: false }) )
 
 
 //Route the  /api/profile/:id requests to routes
-app.use('/api/profile', checkAuth, require('./routes/profileRoutes'))
+app.use('/api/profile',checkAuth, require('./routes/profileRoutes'))
 
 
 
